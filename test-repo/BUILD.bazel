@@ -1,4 +1,5 @@
 load("@rules_python//python:defs.bzl", "py_binary")
+load("//:rules.bzl", "python_image")
 
 py_binary(
   name = "main",
@@ -7,4 +8,14 @@ py_binary(
       "@pip//pydantic",
       "@pip//fastapi",
   ]
+)
+
+# $ bazel run //hello_world:tarball
+# $ docker run --rm gcr.io/oci_python_main:latest
+python_image(
+    name = "tarball",
+    base = "@ubuntu",
+    binary = "main",
+    entrypoint = ["test-repo/main"],
+    tags = ["gcr.io/oci_python_main:latest"]
 )
