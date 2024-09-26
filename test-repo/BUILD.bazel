@@ -1,5 +1,9 @@
 load("@rules_python//python:defs.bzl", "py_binary")
-load("//:rules.bzl", "python_image")
+load("@aspect_rules_py//py:defs.bzl", "py_binary", "py_library")
+load("@aspect_bazel_lib//lib:transitions.bzl", "platform_transition_filegroup")
+load("@pip//:requirements.bzl", "requirement")
+load("@rules_oci//oci:defs.bzl", "oci_tarball", "oci_push")
+load("//:py_layer.bzl", "py_oci_image")
 
 py_binary(
   name = "main",
@@ -10,12 +14,49 @@ py_binary(
   ]
 )
 
-# $ bazel run //hello_world:tarball
-# $ docker run --rm gcr.io/oci_python_main:latest
-python_image(
-    name = "tarball",
+py_oci_image(
+    name = "image",
     base = "@ubuntu",
     binary = "main",
     entrypoint = ["test-repo/main"],
-    tags = ["gcr.io/oci_python_main:latest"]
+)
+
+platform(
+    name = "aarch64_linux",
+    constraint_values = [
+        "@platforms//os:linux",
+        "@platforms//cpu:aarch64",
+    ],
+)
+
+platform(
+    name = "x86_64_linux",
+    constraint_values = [
+        "@platforms//os:linux",
+        "@platforms//cpu:x86_64",
+    ],
+)
+
+platform_transition_filegroup(
+    name = "platform_image",
+    srcs = [":image"],
+    target_platform = select({
+        "@platforms//cpu:arm64": ":aarch64_linux",
+        "@platforms//cpu:x86_64": ":x86_64_linux",
+    }),
+)
+
+# $ bazel run //hello_world:tarball
+# $ docker run --rm gcr.io/oci_python_main:latest
+oci_tarball(
+    name = "tarball",
+    image = ":platform_image",
+    repo_tags = ["sbolo/argo-phoenix-test:latest"],
+)
+
+oci_push(
+    name = "artifact_release",
+    image = ":image",
+    repository = "index.docker.io/sbolo/argo-phoenix-test",
+    remote_tags = ["latest"],
 )
