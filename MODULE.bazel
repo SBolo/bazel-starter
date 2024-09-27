@@ -3,14 +3,29 @@ module(
     repo_name = "com_argo_phoenix",
 )
 
+### Required for Python ###
 # https://github.com/bazelbuild/rules_python/releases.
+bazel_dep(name = "rules_python", version = "0.36.0")
+
+
+### Required for Open Containers ###
+bazel_dep(name = "platforms", version = "0.0.10")
+bazel_dep(name = "aspect_rules_py", version = "0.7.3")
+bazel_dep(name = "rules_oci", version = "1.8.0")
 bazel_dep(name = "aspect_bazel_lib", version = "2.7.8")
 bazel_dep(name = "container_structure_test", version = "1.16.0")
-bazel_dep(name = "aspect_rules_py", version = "0.7.3")
-bazel_dep(name = "rules_python", version = "0.36.0")
-bazel_dep(name = "rules_oci", version = "1.8.0")
-bazel_dep(name = "platforms", version = "0.0.10")
 
+
+### Required for Go ###
+bazel_dep(name = "rules_go", version = "0.39.1")
+bazel_dep(name = "gazelle", version = "0.31.0")
+
+
+### Required for Tar Packages (and Go containers using OCI) ###
+bazel_dep(name = "rules_pkg", version = "1.0.1")
+
+
+### pip integration ###
 pip = use_extension("@rules_python//python/extensions:pip.bzl", "pip")
 pip.parse(
     hub_name = "pip",
@@ -19,15 +34,40 @@ pip.parse(
 )
 use_repo(pip, "pip")
 
+
+### OCI base images
 oci = use_extension("@rules_oci//oci:extensions.bzl", "oci")
 
 oci.pull(
     name = "ubuntu",
-    image = "ubuntu",
+    image = "docker.io/library/ubuntu",
     tag = "latest",
     platforms = [
         "linux/arm64/v8",
         "linux/amd64",
     ],
 )
+
+oci.pull(
+    name = "python-slim",
+    image = "docker.io/library/python",
+    tag = "3.11-slim",
+    platforms = [
+        "linux/arm64/v8",
+        "linux/amd64",
+    ],
+)
+
+oci.pull(
+    name = "golang-alpine",
+    image = "docker.io/library/golang",
+    tag = "1.23-alpine",
+    platforms = [
+        "linux/arm64/v8",
+        "linux/amd64",
+    ],
+)
+
+use_repo(oci, "python-slim")
 use_repo(oci, "ubuntu")
+use_repo(oci, "golang-alpine")

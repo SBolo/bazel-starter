@@ -1,0 +1,30 @@
+load("@rules_go//go:def.bzl", "go_binary")
+load("@rules_pkg//pkg:tar.bzl", "pkg_tar")
+load("@rules_oci//oci:defs.bzl", "oci_image")
+load("//:rules.bzl", "local_image")
+
+go_binary(
+    name = "hello_world",
+    srcs = ["hello_world.go"],
+    importpath = ".",
+    visibility = ["//visibility:public"],
+    cgo = False,
+)
+
+pkg_tar(
+    name = "tar",
+    srcs = [":hello_world"],
+)
+
+oci_image(
+    name = "image",
+    base = "@golang-alpine",
+    tars = [":tar"],
+    entrypoint = ["/hello_world"],
+)
+
+local_image(
+    name = "tarball",
+    image_target = ":image",
+    tag = "sbolo/argo-phoenix-test:local"
+)
