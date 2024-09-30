@@ -2,7 +2,7 @@
 
 ## Python images
 
-This repository provides a rule to build Python images. In your BUILD.bazel file, you can write:
+This repository provides a custom rule to build Python images. In your BUILD.bazel file, you can write:
 
 ```starlark
 load("@rules_python//python:defs.bzl", "py_binary")
@@ -41,4 +41,36 @@ oci_push(
 
 ## Go images
 
+This repository also provides a custom rule to build Go images. In your BUILD.bazel file, you can write:
 
+```starlark
+load("@rules_go//go:def.bzl", "go_binary", "go_library")
+load("@rules_oci//oci:defs.bzl", "oci_tarball", "oci_push")
+load("//tools:rules_image.bzl", "go_image", "REMOTE_REPOSITORY")
+
+REPO = "test-go"
+
+go_library(
+    name = "app_lib",
+    ...
+)
+
+go_binary(
+    name = "app",
+    embed = [":app_lib"],
+    visibility = ["//visibility:public"],
+)
+
+go_image(
+    name = "image",
+    srcs = [":app"],
+    entrypoint = "/app",
+)
+
+oci_push(
+    name = "artifact_release",
+    image = ":image",
+    repository = REMOTE_REPSITORY,
+    remote_tags = [REPO],
+)
+```
