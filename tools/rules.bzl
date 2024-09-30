@@ -1,7 +1,15 @@
 load("@aspect_bazel_lib//lib:transitions.bzl", "platform_transition_filegroup")
 load("@rules_oci//oci:defs.bzl", "oci_tarball")
+load("//tools:py_layer.bzl", "py_oci_image")
 
-def local_image(name, image_target, tag):
+def py_image(name, base, binary, entrypoint):
+    py_oci_image(
+        name = "image",
+        base = base,
+        binary = binary,
+        entrypoint = [entrypoint],
+    )
+
     native.platform(
         name = "aarch64_linux",
         constraint_values = [
@@ -19,16 +27,10 @@ def local_image(name, image_target, tag):
     )
 
     platform_transition_filegroup(
-        name = "platform_image",
-        srcs = [image_target],
+        name = name,
+        srcs = [":image"],
         target_platform = select({
             "@platforms//cpu:arm64": ":aarch64_linux",
             "@platforms//cpu:x86_64": ":x86_64_linux",
         }),
-    )
-
-    oci_tarball(
-        name = name,
-        image = ":platform_image",
-        repo_tags = [tag],
     )

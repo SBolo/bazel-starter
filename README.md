@@ -5,7 +5,7 @@
 To create a Python or Go image to run locally for testing, use the following in your BUILD.bazel:
 
 ```starlark
-load("//:rules.bzl", "local_image")
+load("//tools:rules.bzl", "local_image")
 
 local_image(
     name = "tarball",

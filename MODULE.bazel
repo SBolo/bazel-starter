@@ -40,34 +40,21 @@ oci = use_extension("@rules_oci//oci:extensions.bzl", "oci")
 
 oci.pull(
     name = "ubuntu",
-    image = "docker.io/library/ubuntu",
+    image = "ubuntu",
     tag = "latest",
     platforms = [
         "linux/arm64/v8",
         "linux/amd64",
     ],
 )
-
-oci.pull(
-    name = "python-slim",
-    image = "docker.io/library/python",
-    tag = "3.11-slim",
-    platforms = [
-        "linux/arm64/v8",
-        "linux/amd64",
-    ],
-)
-
-oci.pull(
-    name = "golang-alpine",
-    image = "docker.io/library/golang",
-    tag = "1.23-alpine",
-    platforms = [
-        "linux/arm64/v8",
-        "linux/amd64",
-    ],
-)
-
-use_repo(oci, "python-slim")
 use_repo(oci, "ubuntu")
-use_repo(oci, "golang-alpine")
+
+oci.pull(
+    name = "python-bullseye",
+    image = "python",
+    tag = "3.11-bullseye",
+    platforms = [
+        "linux/arm64/v8",
+    ],
+)
+use_repo(oci, "python-bullseye")
