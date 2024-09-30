@@ -1,7 +1,8 @@
 load("@rules_python//python:defs.bzl", "py_binary")
-load("@pip//:requirements.bzl", "requirement")
 load("@rules_oci//oci:defs.bzl", "oci_tarball", "oci_push")
-load("//tools:rules.bzl", "py_image")
+load("//tools:rules_image.bzl", "py_image", "REMOTE_REPSITORY")
+
+REPO = "test-py"
 
 py_binary(
   name = "main",
@@ -13,23 +14,22 @@ py_binary(
 )
 
 py_image(
-    name = "platform_image",
-    base = "@python-bullseye",
+    name = "image",
     binary = "main",
-    entrypoint = "test-py/main",
+    entrypoint = REPO + "/main",
 )
 
 # $ bazel run //hello_world:tarball
 # $ docker run --rm gcr.io/oci_python_main:latest
 oci_tarball(
     name = "tarball",
-    image = ":platform_image",
-    repo_tags = ["sbolo/argo-phoenix-test:latest"],
+    image = ":image",
+    repo_tags = ["local:" + REPO],
 )
 
 oci_push(
     name = "artifact_release",
-    image = ":platform_image",
-    repository = "index.docker.io/sbolo/argo-phoenix-test",
-    remote_tags = ["test-py"],
+    image = ":image",
+    repository = REMOTE_REPSITORY,
+    remote_tags = [REPO],
 )

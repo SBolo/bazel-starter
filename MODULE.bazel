@@ -38,23 +38,29 @@ use_repo(pip, "pip")
 ### OCI base images
 oci = use_extension("@rules_oci//oci:extensions.bzl", "oci")
 
+# Base OS: Debian 12 (codename Bookworm)
+# Newer release of Debian, so it comes with updated packages and libraries.
+# Slightly larger than Alpine, but similarly feature-rich to Bullseye.
+# More up-to-date than Bullseye, so it may include newer libraries, system packages, and security improvements.
+# A good choice for projects that want a balance between feature completeness and a modern OS environment.
 oci.pull(
-    name = "ubuntu",
-    image = "ubuntu",
-    tag = "latest",
-    platforms = [
-        "linux/arm64/v8",
-        "linux/amd64",
-    ],
-)
-use_repo(oci, "ubuntu")
-
-oci.pull(
-    name = "python-bullseye",
+    name = "python-bookworm",
     image = "python",
-    tag = "3.11-bullseye",
+    tag = "3.11-bookworm",
     platforms = [
         "linux/arm64/v8",
     ],
 )
-use_repo(oci, "python-bullseye")
+use_repo(oci, "python-bookworm")
+
+# similar to the Python case
+oci.pull(
+    name = "golang-bookworm",
+    image = "golang",
+    tag = "1.23-bookworm",
+    platforms = [
+        "linux/arm64/v8",
+    ],
+)
+use_repo(oci, "golang-bookworm")
+

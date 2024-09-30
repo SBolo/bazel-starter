@@ -1,7 +1,8 @@
-load("@aspect_bazel_lib//lib:testing.bzl", "assert_archive_contains")
 load("@rules_go//go:def.bzl", "go_binary", "go_library")
-load("@rules_oci//oci:defs.bzl", "oci_image", "oci_tarball", "oci_push")
-load("@rules_pkg//:pkg.bzl", "pkg_tar")
+load("@rules_oci//oci:defs.bzl", "oci_tarball", "oci_push")
+load("//tools:rules_image.bzl", "go_image", "REMOTE_REPSITORY")
+
+REPO = "test-go"
 
 go_library(
     name = "app_lib",
@@ -16,29 +17,15 @@ go_binary(
     visibility = ["//visibility:public"],
 )
 
-# Put app go_binary into a tar layer.
-pkg_tar(
-    name = "app_layer",
-    srcs = [":app"],
-)
-
-# Prove that the application is at the path we expect in that tar.
-assert_archive_contains(
-    name = "test_app_layer",
-    archive = "app_layer.tar",
-    expected = ["app"],
-)
-
-oci_image(
+go_image(
     name = "image",
-    base = "@golang",
-    entrypoint = ["/app"],
-    tars = [":app_layer"],
+    srcs = [":app"],
+    entrypoint = "/app",
 )
 
 oci_push(
     name = "artifact_release",
     image = ":image",
-    repository = "index.docker.io/sbolo/argo-phoenix-test",
-    remote_tags = ["test-repo-go"],
+    repository = REMOTE_REPSITORY,
+    remote_tags = [REPO],
 )
