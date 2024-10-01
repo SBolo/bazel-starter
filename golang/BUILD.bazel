@@ -1,0 +1,40 @@
+load("@rules_go//go:def.bzl", "go_binary", "go_library")
+load("@rules_oci//oci:defs.bzl", "oci_push", "oci_tarball")
+load("//tools:rules_artifacts.bzl", "REMOTE_REPOSITORY", "go_image")
+
+REPO = "golang"
+
+go_library(
+    name = "app_lib",
+    srcs = ["main.go"],
+    importpath = ".",
+    visibility = ["//visibility:private"],
+    deps = ["@org_go4_netipx"],
+)
+
+go_binary(
+    name = "app",
+    embed = [":test-go_lib"],
+    visibility = ["//visibility:public"],
+)
+
+go_image(
+    name = "image",
+    srcs = [":app"],
+    entrypoint = "/app",
+)
+
+oci_push(
+    name = "artifact_release",
+    image = ":image",
+    remote_tags = [REPO],
+    repository = REMOTE_REPOSITORY,
+)
+
+go_library(
+    name = "test-go_lib",
+    srcs = ["main.go"],
+    importpath = "github.com/SBolo/argo-phoenix/test-go",
+    visibility = ["//visibility:private"],
+    deps = ["@org_go4_netipx//:netipx"],
+)

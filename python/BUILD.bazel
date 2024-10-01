@@ -1,0 +1,35 @@
+load("@rules_python//python:defs.bzl", "py_binary")
+load("@rules_oci//oci:defs.bzl", "oci_push", "oci_tarball")
+load("//tools:rules_artifacts.bzl", "REMOTE_REPOSITORY", "py_image")
+
+REPO = "python"
+
+py_binary(
+    name = "main",
+    srcs = ["main.py"],
+    deps = [
+        "@pip//fastapi",
+        "@pip//pydantic",
+    ],
+)
+
+py_image(
+    name = "image",
+    binary = "main",
+    entrypoint = REPO + "/main",
+)
+
+# $ bazel run //hello_world:tarball
+# $ docker run --rm gcr.io/oci_python_main:latest
+oci_tarball(
+    name = "tarball",
+    image = ":image",
+    repo_tags = ["local:" + REPO],
+)
+
+oci_push(
+    name = "artifact_release",
+    image = ":image",
+    remote_tags = [REPO],
+    repository = REMOTE_REPOSITORY,
+)
