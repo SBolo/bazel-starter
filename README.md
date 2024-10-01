@@ -19,10 +19,10 @@ docker run --rm <name>:<tag>
 To add new dependencies, you can add the specific requirement into the `requirements.txt` file and run
 
 ```shell
-pip-compile --output-file=requirements_lock.txt requirements.txt
+bazel run requirements.update
 ```
 
-I realize this is not a fully hermetic approach, as `pip-compile` comes from the local `python` instance rather than the Bazel's one, but so far I haven't found a better alternative.
+to update the `requirements_lock.txt` file.
 
 ### Python images
 
