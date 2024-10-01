@@ -4,7 +4,7 @@ load("//tools:py_layer.bzl", "py_oci_image")
 load("@rules_pkg//:pkg.bzl", "pkg_tar")
 load("@rules_oci//oci:defs.bzl", "oci_image")
 
-REMOTE_REPSITORY = "index.docker.io/sbolo/argo-phoenix-test"
+REMOTE_REPOSITORY = "index.docker.io/sbolo/argo-phoenix-test"
 
 def py_image(name, binary, entrypoint, base = "@python-bookworm"):
     py_oci_image(

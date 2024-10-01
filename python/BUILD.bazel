@@ -1,16 +1,16 @@
 load("@rules_python//python:defs.bzl", "py_binary")
-load("@rules_oci//oci:defs.bzl", "oci_tarball", "oci_push")
-load("//tools:rules_image.bzl", "py_image", "REMOTE_REPSITORY")
+load("@rules_oci//oci:defs.bzl", "oci_push", "oci_tarball")
+load("//tools:rules_artifacts.bzl", "REMOTE_REPOSITORY", "py_image")
 
-REPO = "test-py"
+REPO = "python"
 
 py_binary(
-  name = "main",
-  srcs = ["main.py"],
-  deps = [
-      "@pip//pydantic",
-      "@pip//fastapi",
-  ]
+    name = "main",
+    srcs = ["main.py"],
+    deps = [
+        "@pip//fastapi",
+        "@pip//pydantic",
+    ],
 )
 
 py_image(
@@ -30,6 +30,6 @@ oci_tarball(
 oci_push(
     name = "artifact_release",
     image = ":image",
-    repository = REMOTE_REPSITORY,
     remote_tags = [REPO],
+    repository = REMOTE_REPOSITORY,
 )

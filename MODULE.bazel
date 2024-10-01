@@ -7,7 +7,6 @@ module(
 # https://github.com/bazelbuild/rules_python/releases.
 bazel_dep(name = "rules_python", version = "0.36.0")
 
-
 ### Required for Open Containers ###
 bazel_dep(name = "platforms", version = "0.0.10")
 bazel_dep(name = "aspect_rules_py", version = "0.7.3")
@@ -15,15 +14,16 @@ bazel_dep(name = "rules_oci", version = "1.8.0")
 bazel_dep(name = "aspect_bazel_lib", version = "2.7.8")
 bazel_dep(name = "container_structure_test", version = "1.16.0")
 
-
 ### Required for Go ###
 bazel_dep(name = "rules_go", version = "0.39.1")
 bazel_dep(name = "gazelle", version = "0.31.0")
 
+go_deps = use_extension("@gazelle//:extensions.bzl", "go_deps")
+go_deps.from_file(go_mod = "//:go.mod")
+use_repo(go_deps, "org_go4_netipx")
 
 ### Required for Tar Packages (and Go containers using OCI) ###
 bazel_dep(name = "rules_pkg", version = "1.0.1")
-
 
 ### pip integration ###
 pip = use_extension("@rules_python//python/extensions:pip.bzl", "pip")
@@ -33,7 +33,6 @@ pip.parse(
     requirements_lock = "//:requirements_lock.txt",
 )
 use_repo(pip, "pip")
-
 
 ### OCI base images
 oci = use_extension("@rules_oci//oci:extensions.bzl", "oci")
@@ -46,10 +45,10 @@ oci = use_extension("@rules_oci//oci:extensions.bzl", "oci")
 oci.pull(
     name = "python-bookworm",
     image = "python",
-    tag = "3.11-bookworm",
     platforms = [
         "linux/arm64/v8",
     ],
+    tag = "3.11-bookworm",
 )
 use_repo(oci, "python-bookworm")
 
@@ -57,10 +56,9 @@ use_repo(oci, "python-bookworm")
 oci.pull(
     name = "golang-bookworm",
     image = "golang",
-    tag = "1.23-bookworm",
     platforms = [
         "linux/arm64/v8",
     ],
+    tag = "1.23-bookworm",
 )
 use_repo(oci, "golang-bookworm")
-
