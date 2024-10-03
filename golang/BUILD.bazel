@@ -30,11 +30,3 @@ oci_push(
     remote_tags = [REPO],
     repository = REMOTE_REPOSITORY,
 )
-
-go_library(
-    name = "test-go_lib",
-    srcs = ["main.go"],
-    importpath = "github.com/SBolo/argo-phoenix/test-go",
-    visibility = ["//visibility:private"],
-    deps = ["@org_go4_netipx//:netipx"],
-)

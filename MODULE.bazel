@@ -34,6 +34,11 @@ use_repo(go_deps, "org_go4_netipx")
 ####################
 bazel_dep(name = "rules_pkg", version = "1.0.1")
 
+###############
+### Linters ###
+###############
+bazel_dep(name = "aspect_rules_lint", version = "1.0.1")
+
 ###########
 ### Pip ###
 ###########

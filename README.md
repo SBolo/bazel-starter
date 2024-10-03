@@ -63,6 +63,14 @@ oci_push(
 )
 ```
 
+### Python linting
+
+This repository supports Python linting with `ruff`. To run linting for python packages, you can run
+
+```starlark
+bazel lint //python:all
+```
+
 ## Using Go
 
 To start from scratch with Go, run
@@ -140,3 +148,29 @@ oci_push(
     remote_tags = [REPO],
 )
 ```
+
+## Formatting
+
+To run format your code, run
+
+```shell
+bazel run //:format
+```
+
+To check, instead, if the code is formatter-compliant, run
+
+```shell
+bazel run //tools/format:format.check
+```
+
+Currently, this repository supports formatting of Python, Golang, Terraform, Bash, JSON and YAML. Both commands will run the formatters on all the code in the repository. If you would rather run a formatting check on some specific package, you can add the target
+
+```starlark
+format_test(
+    name = "format_test",
+    python = "@aspect_rules_lint//format:ruff",
+    srcs = ["main.py"],
+)
+```
+
+to your `BUILD.bazel` file. The specific binary for the formatter can be picked from the examples in `tools/format/BUILD.bazel`.

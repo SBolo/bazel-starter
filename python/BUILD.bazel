@@ -1,6 +1,7 @@
 load("@rules_python//python:defs.bzl", "py_binary")
 load("@rules_oci//oci:defs.bzl", "oci_push", "oci_tarball")
 load("//tools:rules_artifacts.bzl", "REMOTE_REPOSITORY", "py_image")
+load("@aspect_rules_lint//format:defs.bzl", "format_test")
 
 REPO = "python"
 
@@ -32,4 +33,10 @@ oci_push(
     image = ":image",
     remote_tags = [REPO],
     repository = REMOTE_REPOSITORY,
+)
+
+format_test(
+    name = "format_test",
+    python = "@aspect_rules_lint//format:ruff",
+    srcs = ["main.py"],
 )
