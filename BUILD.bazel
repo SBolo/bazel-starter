@@ -10,3 +10,12 @@ compile_pip_requirements(
     requirements_txt = "requirements_lock.txt",
     extra_args = ["--allow-unsafe"],
 )
+
+# required by ruff
+exports_files(["pyproject.toml"])
+
+# required to run the formatter
+alias(
+    name = "format",
+    actual = "//tools/format",
+)
