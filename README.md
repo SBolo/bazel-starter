@@ -1,4 +1,6 @@
-# Argo-Phoenix
+# Bazel Starter
+
+This repo is meant to provide with an off-the-shelf and functioning starter repository to get going with Bazel for a Python and Go project. It does not allow you to do anything particularly advanced but it serves the purpose of illustrating the main steps that one needs to take into account when setting up a Bazel project from scratch.
 
 ## Some bazic tidiness
 
@@ -76,7 +78,7 @@ bazel lint //python:all
 To start from scratch with Go, run
 
 ```bash
-bazel run @rules_go//go mod init github.com/SBolo/argo-phoenix
+bazel run @rules_go//go mod init github.com/SBolo/bazel-starter
 bazel run @rules_go//go mod tidy
 ```
 
@@ -99,7 +101,7 @@ would generate something like
 go_library(
     name = "test-go_lib",
     srcs = ["main.go"],
-    importpath = "github.com/SBolo/argo-phoenix/test-go",
+    importpath = "github.com/SBolo/bazel-starter/test-go",
     visibility = ["//visibility:private"],
     deps = ["@org_go4_netipx//:netipx"],
 )
