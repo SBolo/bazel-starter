@@ -1,6 +1,6 @@
 module(
-    name = "argophoenix",
-    repo_name = "com_argo_phoenix",
+    name = "bazelstarter",
+    repo_name = "com_bazel_starter",
 )
 
 ##############
