@@ -1,4 +1,4 @@
-module github.com/SBolo/argo-phoenix
+module github.com/SBolo/bazel-starter
 
 go 1.19
 
